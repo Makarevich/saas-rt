@@ -7,19 +7,29 @@ class MoviesController < ApplicationController
   end
 
   def index
-    logger.info params.inspect
+    #logger.info params.inspect
+
+    @filters = {}
+
+    @movies = if params[:ratings]
+      params[:ratings].each_key { |k| @filters[k] = true }
+      Movie.where(:rating => params[:ratings].keys)
+    else
+      Movie.all
+    end
+      
     @movies = case params['sort-by']
       when 'title'
         @hilite_title = true
-        Movie.order('title')
+        @movies.order('title')
       when 'release_date'
         @hilite_release_date = true
-        Movie.order('release_date')
+        @movies.order('release_date')
       else
-        Movie.all
+        @movies
     end
-    
-    # @movies = Movie.all
+
+    @all_ratings = Movie.select(:rating).map { |x| x.rating }.uniq
   end
 
   def new
