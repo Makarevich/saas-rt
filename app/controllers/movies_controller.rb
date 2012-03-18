@@ -7,7 +7,17 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    logger.info params.inspect
+    @movies = case params['sort-by']
+      when 'title'
+        Movie.order('title')
+      when 'release_date'
+        Movie.order('release_date')
+      else
+        Movie.all
+    end
+    
+    # @movies = Movie.all
   end
 
   def new
