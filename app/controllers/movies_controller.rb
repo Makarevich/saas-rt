@@ -10,8 +10,10 @@ class MoviesController < ApplicationController
     logger.info params.inspect
     @movies = case params['sort-by']
       when 'title'
+        @hilite_title = true
         Movie.order('title')
       when 'release_date'
+        @hilite_release_date = true
         Movie.order('release_date')
       else
         Movie.all
