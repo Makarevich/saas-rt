@@ -11,25 +11,28 @@ class MoviesController < ApplicationController
 
     @filters = {}
 
-    @movies = if params[:ratings]
+    @ratings = params[:ratings]
+
+    find_params = {}
+
+    if params[:ratings]
       params[:ratings].each_key { |k| @filters[k] = true }
-      Movie.where(:rating => params[:ratings].keys)
-    else
-      Movie.all
+      find_params[:conditions] = { :rating => params[:ratings].keys }
     end
       
-    @movies = case params['sort-by']
+    case params['sort-by']
       when 'title'
         @hilite_title = true
-        @movies.order('title')
+        find_params[:order] = 'title'
       when 'release_date'
         @hilite_release_date = true
-        @movies.order('release_date')
-      else
-        @movies
+        find_params[:order] = 'release_date'
     end
 
+    @movies = Movie.all(find_params)
+
     @all_ratings = Movie.select(:rating).map { |x| x.rating }.uniq
+
   end
 
   def new
