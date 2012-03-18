@@ -9,6 +9,15 @@ class MoviesController < ApplicationController
   def index
     #logger.info params.inspect
 
+    if !params[:ratings] && !params['sort-by'] && !params['commit'] && session['index-params']
+      return redirect_to movies_path(session['index-params'])
+    end
+
+    session['index-params'] = {
+      :ratings  => params[:ratings],
+      'sort-by' => params['sort-by']
+    }
+
     @filters = {}
 
     @ratings = params[:ratings]
@@ -31,7 +40,7 @@ class MoviesController < ApplicationController
 
     @movies = Movie.all(find_params)
 
-    @all_ratings = Movie.select(:rating).map { |x| x.rating }.uniq
+    @all_ratings = Movie.select(:rating).map { |x| x.rating }.uniq      # TODO: issue SELECT DISTINCT
 
   end
 
