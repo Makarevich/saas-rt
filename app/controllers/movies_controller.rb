@@ -10,7 +10,9 @@ class MoviesController < ApplicationController
     #logger.info params.inspect
 
     if !params[:ratings] && !params['sort-by'] && !params['commit'] && session['index-params']
-      return redirect_to movies_path(session['index-params'])
+      ss = session['index-params']
+      session['index-params'] = nil
+      return redirect_to movies_path(ss)
     end
 
     session['index-params'] = {
